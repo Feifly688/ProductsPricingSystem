@@ -74,7 +74,7 @@
 
 <script setup>
 import request from "../../utils/request";
-import {nextTick, onMounted, ref, watch} from 'vue';
+import {nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue';
 import {ElImage, ElMessage} from 'element-plus';
 import {useRouter} from 'vue-router';
 import {assetUrl} from "../../utils/config";
@@ -97,8 +97,25 @@ const canvas = ref(null);
 const savingRecord = ref(false); // 添加保存状态变量
 let cameraStream = null;
 
+const resetDetectionState = () => {
+    if (previewImage.value && String(previewImage.value).startsWith('blob:')) {
+        URL.revokeObjectURL(previewImage.value);
+    }
+    previewImage.value = null;
+    detectedImagePath.value = null;
+    imagePathForSave.value = null;
+    results.value = null;
+    error.value = null;
+    detectionDuration.value = 0;
+    executeDuration.value = 0;
+};
+
 // 触发文件选择
 const triggerUpload = () => {
+    resetDetectionState();
+    if (fileInput.value) {
+        fileInput.value.value = '';
+    }
     fileInput.value.click();
 };
 
@@ -114,10 +131,7 @@ const processImage = async (file) => {
     if (!file) return;
     try {
         uploading.value = true;
-        error.value = null;
-        results.value = null;
-        detectedImagePath.value = null;
-        imagePathForSave.value = null;
+        resetDetectionState();
         // 显示预览
         previewImage.value = URL.createObjectURL(file);
         // 创建FormData
@@ -187,11 +201,15 @@ const processImage = async (file) => {
 const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     await processImage(file);
+    e.target.value = '';
 };
 
 // 打开摄像头
 const openCamera = async () => {
     try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('当前访问地址不支持摄像头调用，请使用 HTTPS 域名访问，或在本机 localhost 环境下使用');
+        }
         cameraStream = await navigator.mediaDevices.getUserMedia({video: true});
         isCameraOpen.value = true;
     } catch (err) {
@@ -275,6 +293,15 @@ watch(results, (newValue) => {
 
 onMounted(() => {
     fetchPriceDatabase();
+});
+
+onBeforeUnmount(() => {
+    if (previewImage.value && String(previewImage.value).startsWith('blob:')) {
+        URL.revokeObjectURL(previewImage.value);
+    }
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
 });
 </script>
 

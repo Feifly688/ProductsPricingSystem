@@ -133,8 +133,9 @@ public class DetectController {
                 return detectionError(500, "Detection failed, exitCode=" + exitCode, command, stdoutStr, stderrStr);
             }
 
-            logger.info("检测结果: {}", stdoutStr);
-            JSONObject jsonObject = JSONObject.parseObject(stdoutStr);
+            String jsonOutput = extractDetectionJson(stdoutStr);
+            logger.info("检测结果: {}", jsonOutput);
+            JSONObject jsonObject = JSONObject.parseObject(jsonOutput);
             JSONArray detections = jsonObject.getJSONArray("detections");
             if (detections == null) {
                 detections = new JSONArray();
@@ -244,6 +245,30 @@ public class DetectController {
             return BigDecimal.valueOf(((Number) priceObj).doubleValue());
         }
         return new BigDecimal(String.valueOf(priceObj));
+    }
+
+    private String extractDetectionJson(String stdout) {
+        if (stdout == null || stdout.isBlank()) {
+            throw new IllegalStateException("Python 检测脚本没有输出结果");
+        }
+
+        String trimmed = stdout.trim();
+        int jsonStart = trimmed.indexOf("{\"detections\"");
+        if (jsonStart < 0) {
+            jsonStart = trimmed.indexOf("{'detections'");
+        }
+        if (jsonStart < 0 && trimmed.startsWith("{")) {
+            jsonStart = 0;
+        }
+        if (jsonStart < 0) {
+            throw new IllegalStateException("Python 检测脚本输出不是合法 JSON: " + truncate(trimmed, 500));
+        }
+
+        int jsonEnd = trimmed.lastIndexOf('}');
+        if (jsonEnd < jsonStart) {
+            throw new IllegalStateException("Python 检测脚本 JSON 输出不完整: " + truncate(trimmed, 500));
+        }
+        return trimmed.substring(jsonStart, jsonEnd + 1);
     }
 
     private ResponseEntity<String> detectionError(int status, String message, List<String> command, String stdout, String stderr) {
