@@ -1,0 +1,40 @@
+server:
+  port: 9090
+# 数据库配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/product_pricing_system?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB #上传单个文件最大大小
+      max-request-size: 100MB #请求所有文件总大小
+
+# 配置mybatis实体和xml映射
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+# 文件上传的前缀url
+fileBaseUrl: http://localhost:9090
+
+model:
+  base-path: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/deepLearning/models
+python:
+  script:
+    path: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/deepLearning/yolov8/predict_upload.py
+conda:
+  env:
+    name: yolov8
+detection:
+  process:
+    timeout: 60
+temp:
+  image:
+    dir: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/temp_upload_images
+    prefix: uploaded_image

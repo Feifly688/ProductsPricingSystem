@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AdminMapper">
+
+    <!--查询所有-->
+    <select id="selectAll" resultType="com.example.entity.Admin">
+        select * from admin
+        <where>
+            <if test="username != null and username != ''">and username like concat('%', #{username}, '%')</if>
+        </where>
+        order by id
+    </select>
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.entity.Admin">
+        select *
+        from admin
+        where id = #{id}
+    </select>
+    <!--根据用户名查询-->
+    <select id="selectByUsername" resultType="com.example.entity.Admin">
+        select *
+        from admin
+        <where>
+            <if test="username != null">and username like #{username}</if>
+        </where>
+    </select>
+    <!--新增-->
+    <insert id="insert" parameterType="com.example.entity.Admin" useGeneratedKeys="true">
+        insert into admin(username, password, name, avatar, role)
+        values (#{username}, #{password}, #{name}, #{avatar}, #{role})
+    </insert>
+    <!--修改数据-->
+    <update id="updateById" parameterType="com.example.entity.Admin">
+        update admin
+        set username = #{username},
+            password = #{password},
+            name     = #{name},
+            avatar   = #{avatar},
+            role     = #{role}
+        where id = #{id}
+    </update>
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="com.example.entity.Admin">
+        delete
+        from admin
+        where id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.FeedbackMapper">
+    
+    <select id="selectByUserId" resultType="com.example.entity.Feedback">
+        SELECT * FROM feedback WHERE userId = #{userId} ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectAll" resultType="com.example.entity.Feedback">
+        SELECT * FROM feedback ORDER BY create_time DESC
+    </select>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feedback (userId, username, content, create_time, status)
+        VALUES (#{userId}, #{username}, #{content}, #{createTime}, #{status})
+    </insert>
+    
+    <update id="updateReply">
+        UPDATE feedback SET status = #{status}, reply = #{reply}, reply_time = #{replyTime}
+        WHERE id = #{id}
+    </update>
+    
+</mapper> 

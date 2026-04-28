@@ -1,0 +1,163 @@
+/* ---------------------------------- */
+/* 核心通用样式 (建议放入全局CSS文件) */
+/* ---------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+
+/* 全局背景和字体基础 */
+body {
+    background-color: #050505 !important;
+    font-family: 'Rajdhani', 'Microsoft YaHei', sans-serif !important; /* 增加中文支持 */
+    color: #00f3ff !important; /* Neon Cyan */
+}
+
+/* 统一的赛博朋克卡片风格 (核心内容容器) */
+.cyber-card {
+    background: rgba(10, 15, 30, 0.65) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(0, 243, 255, 0.2) !important;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), inset 0 0 5px rgba(0, 243, 255, 0.05) !important;
+    padding: 30px !important;
+    border-radius: 0 !important;
+}
+
+/* 统一的赛博朋克按钮风格 (能量填充) */
+.cyber-btn {
+    height: 40px !important;
+    background: transparent !important;
+    border: 1px solid #00f3ff !important;
+    color: #00f3ff !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    border-radius: 0 !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    padding: 0 20px !important;
+}
+.cyber-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: #00f3ff;
+    transition: left 0.4s ease;
+    z-index: 0;
+}
+.cyber-btn:hover::before {
+    left: 0;
+}
+.cyber-btn:hover {
+    color: #000 !important;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+}
+.cyber-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Element Plus 深度样式覆盖 */
+:deep(.el-input__wrapper),
+:deep(.el-select__wrapper),
+:deep(.el-textarea__inner) {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    box-shadow: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 !important;
+    color: #fff !important;
+    font-family: 'Rajdhani', 'Microsoft YaHei', sans-serif !important;
+}
+:deep(.el-input__wrapper.is-focus),
+:deep(.el-select__wrapper.is-focused) {
+    border-color: rgba(0, 243, 255, 0.5) !important;
+    background-color: rgba(0, 243, 255, 0.05) !important;
+    box-shadow: 0 0 5px rgba(0, 243, 255, 0.5) inset !important;
+}
+:deep(.el-input__prefix-inner),
+:deep(.el-input__inner),
+:deep(.el-form-item__label) {
+    color: #00f3ff !important;
+    letter-spacing: 0.5px;
+}
+/* 表格样式 */
+:deep(.el-table) {
+    --el-table-bg-color: transparent !important;
+    --el-table-tr-bg-color: transparent !important;
+    --el-table-header-bg-color: rgba(0, 243, 255, 0.1) !important;
+    --el-table-border-color: rgba(0, 243, 255, 0.2) !important;
+    color: #e0ffff !important;
+}
+:deep(.el-table th) {
+    border-color: rgba(0, 243, 255, 0.2) !important;
+    color: #00f3ff !important;
+    font-weight: 700;
+}
+:deep(.el-table td) {
+    border-color: rgba(0, 243, 255, 0.1) !important;
+}
+:deep(.el-table tr:hover > td) {
+    background-color: rgba(0, 243, 255, 0.05) !important;
+}
+/* 分页器 */
+:deep(.el-pagination) {
+    --el-pagination-bg-color: transparent !important;
+    --el-pagination-button-bg-color: transparent !important;
+    --el-pagination-button-color: #00f3ff !important;
+    --el-pagination-text-color: #00f3ff !important;
+}
+:deep(.el-pager li.is-active) {
+    color: #00f3ff !important;
+    text-shadow: 0 0 5px #00f3ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #333;
+    font-size: 14px;
+}
+
+a {
+    color: #1967e3;
+    text-decoration: none;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+}
+
+.line1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.line3 {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* 超出几行省略 */
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .el-image {
+        width: 200px; /* 适用于较大屏幕 */
+        height: 260px;
+    }
+
+    div[style*="flex: 1"] {
+        padding-left: 20px; /* 增加左边距以提供更多空间 */
+    }
+}
+/*长评中限制图片宽度*/
+.longComment img {
+     width: 100%;
+}

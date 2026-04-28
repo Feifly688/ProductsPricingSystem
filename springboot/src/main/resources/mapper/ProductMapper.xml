@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ProductMapper">
+    <!--模糊查询所有-->
+    <select id="selectAll" resultType="com.example.entity.Product">
+        select *
+        from product
+        <where>
+            <if test="name != null and name != '' ">and name like concat('%',#{name}, '%')</if>
+        </where>
+    </select>
+    <!--新增数据-->
+    <insert id="insert" parameterType="com.example.entity.Product">
+        insert into product(image, name, price)
+        values (#{image}, #{name}, #{price})
+    </insert>
+    <!--修改数据-->
+    <update id="updateById" parameterType="com.example.entity.Product">
+        update product
+        set image=#{image}, name = #{name}, price = #{price}
+        where id = #{id}
+    </update>
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="com.example.entity.Product">
+        delete
+        from product
+        where id = #{id}
+    </delete>
+    <!--修改销售量-->
+    <update id="updateSales">
+        UPDATE product
+        SET sales = IFNULL(sales, 0) + #{count}
+        WHERE name = #{name}
+    </update>
+    
+    <!--检查商品是否存在-->
+    <select id="checkProductExists" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM product
+        WHERE name = #{name}
+    </select>
+</mapper>

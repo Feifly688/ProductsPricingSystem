@@ -1,0 +1,29 @@
+# IDE
+.idea/
+*.iml
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Build outputs
+springboot/target/
+vue/dist/
+*.class
+*.jar
+
+# Runtime and generated files
+temp_upload_images/
+**/runs/
+**/results/
+
+# Large model artifacts
+*.pt
+*.pth
+
+# OS
+.DS_Store
+Thumbs.db
