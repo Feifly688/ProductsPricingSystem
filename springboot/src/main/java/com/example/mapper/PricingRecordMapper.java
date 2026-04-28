@@ -25,6 +25,14 @@ public interface PricingRecordMapper {
     })
     List<PricingRecord> selectAllRecords();
 
+    @Select("SELECT * FROM pricing_record WHERE create_user_id = #{userId} ORDER BY create_time DESC")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "items", column = "id", javaType = List.class,
+                    many = @Many(select = "selectItemsByRecordId"))
+    })
+    List<PricingRecord> selectRecordsByUserId(String userId);
+
     /**
      * 根据记录ID查询明细
      */

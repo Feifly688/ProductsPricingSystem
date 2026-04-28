@@ -19,6 +19,7 @@ const router = createRouter({
                 { path: 'predict', component: () => import('../views/manager/Predict.vue') },
                 { path: 'compare', component: () => import('../views/manager/Compare.vue') },
                 { path: 'pricing-history', component: () => import('../views/manager/PricingHistory.vue') },
+                { path: 'user-pricing-history', component: () => import('../views/manager/UserPricingHistory.vue') },
                 { path: 'feedback', component: () => import('../views/manager/FeedBack.vue') },
                 { path: 'feedback-manage', component: () => import('../views/manager/FeedBackManager.vue') },
             ]
@@ -53,8 +54,8 @@ router.beforeEach((to, from, next) => {
         return next('/');
     }
 
-    if (user.role !== '普通用户' && to.path === '/feedback') {
-        ElMessage.warning('请管理员使用反馈管理查看');
+    if (user.role !== '普通用户' && ['/feedback', '/user-pricing-history'].includes(to.path)) {
+        ElMessage.warning('该页面仅普通用户可访问');
         return next('/');
     }
 

@@ -5,7 +5,8 @@ import { API_BASE_URL } from './config';
 
 const request = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 70000
+    timeout: 70000,
+    withCredentials: true
 });
 
 request.interceptors.request.use(config => {

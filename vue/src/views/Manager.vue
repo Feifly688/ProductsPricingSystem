@@ -97,6 +97,15 @@
                         </el-menu-item>
                     </div>
 
+                    <div v-if="data.user.role==='普通用户'" class="menu-item-wrapper">
+                        <el-menu-item index="/user-pricing-history">
+                            <el-icon>
+                                <Histogram/>
+                            </el-icon>
+                            <span>我的计价历史</span>
+                        </el-menu-item>
+                    </div>
+
                     <div v-if="data.user.role==='管理员'" class="menu-item-wrapper">
                         <el-menu-item index="/compare">
                             <el-icon>
@@ -236,6 +245,7 @@ const routeTitles = {
     '/product': '商品列表',
     '/predict': '商品计价',
     '/pricing-history': '计价历史',
+    '/user-pricing-history': '我的计价历史',
     '/compare': '模型对比',
     '/admin': '管理员信息',
     '/user': '普通用户信息',
@@ -251,6 +261,7 @@ const routeIcons = {
     '/product': 'Goods',
     '/predict': 'ShoppingCart',
     '/pricing-history': 'Histogram',
+    '/user-pricing-history': 'Histogram',
     '/compare': 'Aim',
     '/admin': 'Avatar',
     '/user': 'User',

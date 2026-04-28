@@ -20,10 +20,15 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         for (String origin : allowedOrigins) {
-            corsConfiguration.addAllowedOrigin(origin);
+            if ("*".equals(origin)) {
+                corsConfiguration.addAllowedOriginPattern(origin);
+            } else {
+                corsConfiguration.addAllowedOrigin(origin);
+            }
         }
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
     }

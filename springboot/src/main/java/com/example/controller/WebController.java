@@ -43,6 +43,9 @@ public class WebController {
         } else if ("普通用户".equals(account.getRole())) {
             ac = userService.login(account);
         }
+        if (ac != null) {
+            request.getSession().setAttribute("user", ac);
+        }
         return Result.success(ac);
     }
 

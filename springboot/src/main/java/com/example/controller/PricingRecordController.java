@@ -7,6 +7,7 @@ import com.example.service.PricingRecordService;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils; // 关键导入
@@ -46,7 +47,8 @@ public class PricingRecordController {
             }
 
             // 绑定操作用户
-            Account user = (Account) request.getSession().getAttribute("user");
+            HttpSession session = request.getSession(false);
+            Account user = session == null ? null : (Account) session.getAttribute("user");
             if (user != null) {
                 record.setCreateUserId(String.valueOf(user.getId()));
                 record.setCreateUserName(user.getName());
@@ -75,6 +77,29 @@ public class PricingRecordController {
             return Result.success(pageInfo);
         } catch (Exception e) {
             logger.error("分页获取价格记录失败", e);
+            return Result.error("获取失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 分页获取当前登录用户的价格检测记录
+     */
+    @GetMapping("/myPage")
+    public Result getMyPage(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Account user = session == null ? null : (Account) session.getAttribute("user");
+        if (user == null) {
+            return Result.error("请先登录");
+        }
+        logger.info("分页获取用户价格记录，用户ID：{}，页码：{}，页大小：{}", user.getId(), pageNum, pageSize);
+        try {
+            PageInfo<PricingRecord> pageInfo = pricingRecordService.getPricingRecordsByUserId(String.valueOf(user.getId()), pageNum, pageSize);
+            return Result.success(pageInfo);
+        } catch (Exception e) {
+            logger.error("分页获取用户价格记录失败，用户ID：{}", user.getId(), e);
             return Result.error("获取失败: " + e.getMessage());
         }
     }

@@ -67,6 +67,13 @@ public class PricingRecordServiceImpl implements PricingRecordService {
     }
 
     @Override
+    public PageInfo<PricingRecord> getPricingRecordsByUserId(String userId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<PricingRecord> records = pricingRecordMapper.selectRecordsByUserId(userId);
+        return new PageInfo<>(records);
+    }
+
+    @Override
     public PricingRecord getPricingRecordById(String id) {
         return StringUtils.hasText(id) ? pricingRecordMapper.selectRecordById(id) : null;
     }
