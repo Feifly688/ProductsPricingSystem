@@ -45,6 +45,12 @@
                             <div class="input-focus-border"></div>
                         </div>
                     </el-form-item>
+                    <el-form-item prop="phone">
+                        <div class="input-group">
+                            <el-input v-model="data.form.phone" :prefix-icon="Phone" placeholder="手机号 // 11位手机号码" class="cyber-input"/>
+                            <div class="input-focus-border"></div>
+                        </div>
+                    </el-form-item>
                     <el-form-item prop="password">
                         <div class="input-group">
                             <el-input v-model="data.form.password" :prefix-icon="Lock" placeholder="访问密码 // 密码" show-password class="cyber-input"/>
@@ -78,7 +84,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, reactive, ref, computed } from "vue";
-import { Lock, User, ShoppingBag, Edit, Check } from "@element-plus/icons-vue";
+import { Lock, User, ShoppingBag, Edit, Check, Phone } from "@element-plus/icons-vue";
 import request from "../utils/request";
 import { ElMessage } from "element-plus";
 import router from "../router";
@@ -92,6 +98,7 @@ const data = reactive({
     form: {
         username: '',
         name: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         role: '普通用户'
@@ -99,6 +106,10 @@ const data = reactive({
     rules: {
         username: [{ required: true, message: '访问ID不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
+        phone: [
+            { required: true, message: '手机号不能为空', trigger: 'blur' },
+            { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+        ],
         password: [{ required: true, message: '访问密码不能为空', trigger: 'blur' }],
         confirmPassword: [
             { required: true, message: '请再次输入密码', trigger: 'blur' },

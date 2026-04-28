@@ -29,7 +29,7 @@
                 <el-table-column label="用户名" prop="name"></el-table-column>
                 <el-table-column label="头像">
                     <template #default="scope">
-                        <el-image :preview-src-list="[scope.row.avatar]" :src="scope.row.avatar" preview-teleported style="width: 40px; height: 40px; border-radius: 50%"></el-image>
+                        <el-image :preview-src-list="[assetUrl(scope.row.avatar)]" :src="assetUrl(scope.row.avatar)" preview-teleported style="width: 40px; height: 40px; border-radius: 50%"></el-image>
                     </template>
                 </el-table-column>
                 <el-table-column label="角色" prop="role">
@@ -56,9 +56,11 @@
 import request from "../../utils/request";
 import {reactive} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {apiUrl, assetUrl} from "../../utils/config";
 
 /*文件上传的接口地址*/
-const uploadUrl = import.meta.env.VITE_BASE_URL + '/files/upload'
+const uploadUrl = apiUrl('/files/upload')
+const defaultAdminAvatar = apiUrl('/files/download/默认管理员头像.jpg')
 
 const data = reactive({
     pageNum: 1,
@@ -87,7 +89,7 @@ const load = () => {
 /*新增*/
 const handleAdd = () => {
     data.form = {
-        avatar: 'http://localhost:9090/files/download/默认管理员头像.jpg'
+        avatar: defaultAdminAvatar
     }
     data.formVisible = true
 }
@@ -167,7 +169,7 @@ const reset = () => {
 
 /*处理文件上传的钩子*/
 const handleImgSuccess = (res) => {
-    data.form.avatar = res.data ? res.data : 'http://localhost:9090/files/download/默认管理员头像.jpg'  // res.data就是文件上传返回的文件路径，获取到路径后赋值表单的属性
+    data.form.avatar = res.data ? res.data : defaultAdminAvatar  // res.data就是文件上传返回的文件路径，获取到路径后赋值表单的属性
 }
 
 load()

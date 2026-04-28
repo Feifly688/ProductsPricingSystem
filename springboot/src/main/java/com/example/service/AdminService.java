@@ -94,6 +94,7 @@ public class AdminService {
         if (!account.getPassword().equals(dbAdmin.getPassword())) {
             throw new CustomException("账号或密码错误！");
         }
+        dbAdmin.setRole("管理员");
         return dbAdmin;
     }
 

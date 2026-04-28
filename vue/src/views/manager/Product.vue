@@ -67,8 +67,8 @@
                     <template #default="scope">
                         <div class="image-container">
                             <el-image
-                                    :preview-src-list="[scope.row.image]"
-                                    :src="scope.row.image"
+                                    :preview-src-list="[assetUrl(scope.row.image)]"
+                                    :src="assetUrl(scope.row.image)"
                                     class="product-image"
                                     fit="cover"
                                     preview-teleported
@@ -222,6 +222,7 @@
 import {reactive} from "vue";
 import request from "../../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {apiUrl, assetUrl} from "../../utils/config";
 import {
     CaretBottom,
     CaretTop,
@@ -234,7 +235,7 @@ import {
 } from '@element-plus/icons-vue';
 
 /*文件上传的接口地址*/
-const uploadUrl = import.meta.env.VITE_BASE_URL + '/files/upload'
+const uploadUrl = apiUrl('/files/upload')
 
 const data = reactive({
     tableData: [],

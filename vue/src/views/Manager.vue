@@ -26,7 +26,7 @@
             <div class="user-info">
                 <el-dropdown trigger="click">
                     <div class="user-dropdown">
-                        <img :src="data.user.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" alt="" class="user-avatar">
+                        <img :src="assetUrl(data.user.avatar) || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" alt="" class="user-avatar">
                         <span class="user-name">{{ data.user.name }}</span>
                         <el-icon class="dropdown-icon">
                             <arrow-down/>
@@ -228,6 +228,7 @@ import {computed, onMounted, reactive, ref, shallowRef} from "vue";
 import router from "../router";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {Aim, Avatar, ChatDotRound, ChatLineRound, Goods, Histogram, HomeFilled, Lock, Memo, ShoppingTrolley, SwitchButton, User, Wallet} from '@element-plus/icons-vue';
+import {assetUrl} from "../utils/config";
 
 // 定义路由标题映射
 const routeTitles = {

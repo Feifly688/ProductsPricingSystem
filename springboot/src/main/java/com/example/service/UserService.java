@@ -14,6 +14,7 @@ import com.example.mapper.UserMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public class UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Value("${app.default-user-avatar:/files/download/默认头像.jpg}")
+    private String defaultUserAvatar;
 
     /**
      * 新增
@@ -57,6 +61,9 @@ public class UserService {
         /*默认名字为用户名*/
         if (ObjectUtil.isEmpty(user.getName())) {
             user.setName(user.getUsername());
+        }
+        if (ObjectUtil.isEmpty(user.getAvatar())) {
+            user.setAvatar(defaultUserAvatar);
         }
         user.setRole("普通用户");
         userMapper.insert(user);
@@ -129,6 +136,7 @@ public class UserService {
         if (!account.getPassword().equals(dbUser.getPassword())) {
             throw new CustomException("账号或密码错误！");
         }
+        dbUser.setRole("普通用户");
         return dbUser;
     }
 

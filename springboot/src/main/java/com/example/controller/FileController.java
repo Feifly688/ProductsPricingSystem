@@ -28,8 +28,8 @@ import java.nio.file.Paths;
 @RequestMapping("/files")
 public class FileController {
 
-    // 表示本地磁盘文件的存储路径
-    private static final String filePath = System.getProperty("user.dir") + "/files/";
+    @Value("${file.storage-dir:files}")
+    private String storageDir;
 
     @Value("${fileBaseUrl}")
     private String fileBaseUrl;
@@ -45,11 +45,11 @@ public class FileController {
         //String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
 
         String fileName = file.getOriginalFilename();
-        // 拼接完整的文件存储路径
-        String realFilePath = filePath + fileName;
+        Path storagePath = Paths.get(storageDir).toAbsolutePath().normalize();
+        String realFilePath = storagePath.resolve(fileName).toString();
         try {
-            if (!FileUtil.isDirectory(filePath)) {
-                FileUtil.mkdir(filePath);
+            if (!FileUtil.isDirectory(storagePath.toString())) {
+                FileUtil.mkdir(storagePath.toString());
             }
             FileUtil.writeBytes(file.getBytes(), realFilePath);
         } catch (IOException e) {
@@ -66,11 +66,15 @@ public class FileController {
     public void download(@PathVariable String fileName, HttpServletResponse response) {
         // 设置下载文件http响应头
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-        // 拼接完整的文件存储路径
-        String realFilePath = filePath + fileName;
+        Path storagePath = Paths.get(storageDir).toAbsolutePath().normalize();
+        Path realFilePath = storagePath.resolve(fileName).normalize();
+        if (!realFilePath.startsWith(storagePath)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         try {
             // 通过文件的存储路径拿到文件字节数组
-            byte[] bytes = FileUtil.readBytes(realFilePath);
+            byte[] bytes = FileUtil.readBytes(realFilePath.toString());
             ServletOutputStream os = response.getOutputStream();
             // 将文件字节数组写出到文件流
             os.write(bytes);

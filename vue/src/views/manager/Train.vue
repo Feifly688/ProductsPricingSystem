@@ -63,7 +63,9 @@ export default {
         },
         async fetchTrainingResults() {
             try {
-                const response = await axios.get(`/api/train/results?model=${this.selectedModel}`);
+                const response = await request.get('/train/results', {
+                    params: {model: this.selectedModel}
+                });
                 this.trainingResults = [{
                     timestamp: new Date(response.data.lastModified).toLocaleString(),
                     log: response.data.logs.join("\n"),

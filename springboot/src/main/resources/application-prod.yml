@@ -1,0 +1,41 @@
+server:
+  address: 0.0.0.0
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: feiqi
+    password: feiqi666MySQL
+    url: jdbc:mysql://1Panel-mysql-iXXa:3306/product_pricing_system?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=10000
+
+fileBaseUrl: http://feifly.me/api
+
+file:
+  storage-dir: /opt/projects/ProductsPricingSystem/files
+
+model:
+  base-path: /opt/projects/ProductsPricingSystem/python/models
+
+python:
+  executable: /opt/projects/ProductsPricingSystem/python/venv/bin/python
+  script:
+    path: /opt/projects/ProductsPricingSystem/python/predict_upload.py
+
+conda:
+  env:
+    name:
+
+temp:
+  image:
+    dir: /opt/projects/ProductsPricingSystem/temp_upload_images
+    prefix: uploaded_image
+
+app:
+  cors:
+    allowed-origins:
+      - http://192.168.10.12
+      - http://feifly.me
+      - https://feifly.me
+      - http://www.feifly.me
+      - https://www.feifly.me

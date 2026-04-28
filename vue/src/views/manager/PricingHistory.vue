@@ -1,13 +1,9 @@
-<!--
-*@author Feiqi
-*@date 2025/3/31 12:55
--->
 <template>
     <div class="container">
         <h1>计价历史记录</h1>
-        <!-- 确认删除弹窗 -->
+
         <el-dialog title="删除确认" v-model="deleteDialogVisible" width="30%">
-            <span>确定要删除这条计价记录吗？删除后不可恢复！</span>
+            <span>确定要删除这条计价记录吗？删除后不可恢复。</span>
             <template #footer>
                 <el-button @click="deleteDialogVisible = false">取消</el-button>
                 <el-button type="primary" @click="confirmDelete">确定删除</el-button>
@@ -27,10 +23,10 @@
                 <div class="record-header">
                     <div class="delete-btn">
                         <el-button
-                                type="text"
-                                icon="Delete"
-                                @click="openDeleteDialog(record.id)"
-                                class="text-danger"
+                            type="text"
+                            icon="Delete"
+                            @click="openDeleteDialog(record.id)"
+                            class="text-danger"
                         >
                             删除
                         </el-button>
@@ -48,10 +44,10 @@
                 <div class="record-content">
                     <div class="record-image">
                         <el-image
-                                :src="imageSrc(record.imagePath)"
-                                fit="cover"
-                                :preview-src-list="[imageSrc(record.imagePath)]"
-                                preview-teleported
+                            :src="imageSrc(record.imagePath)"
+                            fit="cover"
+                            :preview-src-list="[imageSrc(record.imagePath)]"
+                            preview-teleported
                         />
                     </div>
 
@@ -88,39 +84,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onActivated, onBeforeUnmount, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { Calendar, Money } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import request from '../../utils/request';
+import { assetUrl } from '../../utils/config';
 
-const baseURL = (import.meta.env.VITE_BASE_URL || '').replace(/\/$/, '');
-/** 历史记录中的图片需从后端地址加载（/images/、/results/images/ 等） */
-function imageSrc(path) {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
-    return baseURL + (path.startsWith('/') ? path : '/' + path);
-}
+const route = useRoute();
 
-// 响应式数据
 const records = ref([]);
 const loading = ref(true);
 const deleteDialogVisible = ref(false);
 const currentDeleteId = ref('');
 
-// 获取分页记录（修复原请求路径错误：原请求 /pricingRecord 应为 /pricingRecord/page）
+function imageSrc(path) {
+    return path ? assetUrl(path) : '';
+}
+
 const fetchRecords = async () => {
     try {
         loading.value = true;
         const response = await request.get('/pricingRecord/page', {
-            params: { pageNum: 1, pageSize: 20 } // 按需调整分页参数
+            params: {
+                pageNum: 1,
+                pageSize: 20,
+                _t: Date.now()
+            }
         });
+
         if (response.code === '200') {
-            records.value = response.data.list || [];
-        } else {
-            throw new Error(response.msg || '获取记录失败');
+            records.value = response.data?.list || [];
+            return;
         }
+
+        throw new Error(response.msg || '获取记录失败');
     } catch (error) {
-        console.error('获取检测记录失败:', error);
+        console.error('获取计价历史记录失败:', error);
         ElMessage.error(`获取历史记录失败：${error.message || '未知错误'}`);
         records.value = [];
     } finally {
@@ -128,19 +128,23 @@ const fetchRecords = async () => {
     }
 };
 
-// 打开删除弹窗
+const refreshIfCurrentPage = () => {
+    if (route.path === '/pricing-history' && !document.hidden) {
+        fetchRecords();
+    }
+};
+
 const openDeleteDialog = (id) => {
     currentDeleteId.value = id;
     deleteDialogVisible.value = true;
 };
 
-// 确认删除
 const confirmDelete = async () => {
     try {
         const response = await request.delete(`/pricingRecord/${currentDeleteId.value}`);
         if (response.code === '200') {
-            ElMessage.success('删除成功！');
-            fetchRecords();
+            ElMessage.success('删除成功');
+            await fetchRecords();
         } else {
             throw new Error(response.msg || '删除失败');
         }
@@ -153,19 +157,36 @@ const confirmDelete = async () => {
     }
 };
 
-// 格式化日期
 const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleString();
 };
 
-// 格式化数字（统一复用）
 const formatNumber = (num) => {
-    return num ? parseFloat(num).toFixed(2) : '0.00';
+    return Number.isFinite(Number(num)) ? Number(num).toFixed(2) : '0.00';
 };
 
-// 初始化加载
-onMounted(fetchRecords);
+onMounted(() => {
+    fetchRecords();
+    window.addEventListener('focus', refreshIfCurrentPage);
+    document.addEventListener('visibilitychange', refreshIfCurrentPage);
+});
+
+onActivated(fetchRecords);
+
+watch(
+    () => route.fullPath,
+    () => {
+        if (route.path === '/pricing-history') {
+            fetchRecords();
+        }
+    }
+);
+
+onBeforeUnmount(() => {
+    window.removeEventListener('focus', refreshIfCurrentPage);
+    document.removeEventListener('visibilitychange', refreshIfCurrentPage);
+});
 </script>
 
 <style scoped>
@@ -260,7 +281,6 @@ h1 {
     margin-top: 1rem;
 }
 
-/* 响应式适配 */
 @media (max-width: 768px) {
     .record-content {
         flex-direction: column;

@@ -9,7 +9,7 @@
             <el-form :model="data.user" label-width="100px" style="padding-right: 50px" @submit.native.prevent>
                 <div style="margin: 20px 0; text-align: center">
                     <el-upload :action="uploadUrl" :on-success="handleFileUpload" :show-file-list="false" class="avatar-uploader">
-                        <img v-if="data.user.avatar" :src="data.user.avatar" class="avatar"/>
+                        <img v-if="data.user.avatar" :src="assetUrl(data.user.avatar)" class="avatar"/>
                         <el-icon v-else class="avatar-uploader-icon">
                             <Plus/>
                         </el-icon>
@@ -46,9 +46,10 @@ import {reactive, ref, onMounted} from "vue"
 import request from "@/utils/request";
 import {ElMessage} from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
+import {apiUrl, assetUrl} from "@/utils/config";
 
 /*文件上传的接口地址*/
-const uploadUrl = import.meta.env.VITE_BASE_URL + '/files/upload'
+const uploadUrl = apiUrl('/files/upload')
 
 const data = reactive({
     user: JSON.parse(localStorage.getItem('currentUser') || '{}'),

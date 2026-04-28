@@ -77,6 +77,7 @@ import request from "../../utils/request";
 import {nextTick, onMounted, ref, watch} from 'vue';
 import {ElImage, ElMessage} from 'element-plus';
 import {useRouter} from 'vue-router';
+import {assetUrl} from "../../utils/config";
 
 const router = useRouter();
 const fileInput = ref(null);
@@ -145,9 +146,9 @@ const processImage = async (file) => {
                 if (data.processed_image) {
                     detectedImagePath.value = `data:image/jpeg;base64,${data.processed_image}`;
                 } else if (filePath) {
-                    detectedImagePath.value = filePath;
+                    detectedImagePath.value = assetUrl(filePath);
                 } else if (fileName) {
-                    detectedImagePath.value = `/results/images/${fileName}`;
+                    detectedImagePath.value = assetUrl(`/results/images/${fileName}`);
                 } else {
                     detectedImagePath.value = null;
                 }
