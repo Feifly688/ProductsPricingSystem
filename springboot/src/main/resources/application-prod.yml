@@ -6,7 +6,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: feiqi
-    password: feiqi666MySQL
+    password: ${DB_PASSWORD}
     url: jdbc:mysql://1Panel-mysql-iXXa:3306/product_pricing_system?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=10000
 
 fileBaseUrl: http://feifly.me/api

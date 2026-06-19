@@ -19,6 +19,7 @@ vue/dist/
 temp_upload_images/
 **/runs/
 **/results/
+.understand-anything/
 
 # Large model artifacts
 *.pt

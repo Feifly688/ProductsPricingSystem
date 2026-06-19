@@ -6,20 +6,20 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
-    url: jdbc:mysql://localhost:3306/product_pricing_system?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/product_pricing_system?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
 
 fileBaseUrl: http://localhost:9090/api
 
 file:
-  storage-dir: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/files
+  storage-dir: ../files
 
 model:
-  base-path: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/deepLearning/models
+  base-path: ../deepLearning/models
 
 python:
   executable: python
   script:
-    path: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/deepLearning/yolov8/predict_upload.py
+    path: ../deepLearning/yolov8/predict_upload.py
 
 conda:
   env:
@@ -27,7 +27,7 @@ conda:
 
 temp:
   image:
-    dir: D:/Software/IntelliJIDEA2025.3.2/Projects/ProductsPricingSystem/temp_upload_images
+    dir: ../temp_upload_images
     prefix: uploaded_image
 
 app:

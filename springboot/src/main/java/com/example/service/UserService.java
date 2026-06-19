@@ -55,8 +55,9 @@ public class UserService {
             throw new CustomException("电话号码不能为空！");
         }
         
-        if (ObjectUtil.isEmpty(user.getPassword())) {
-            user.setPassword("1");
+        // 密码校验：非空且至少6位
+        if (ObjectUtil.isEmpty(user.getPassword()) || user.getPassword().length() < 6) {
+            throw new CustomException("密码不能为空且至少需要6位！");
         }
         /*默认名字为用户名*/
         if (ObjectUtil.isEmpty(user.getName())) {

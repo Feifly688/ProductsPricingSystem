@@ -20,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 文件前端操作接口
@@ -36,31 +38,58 @@ public class FileController {
     @Value("${model.base-path}")
     private String basePath;
 
+    private static final List<String> ALLOWED_EXTENSIONS = List.of(
+            "jpg", "jpeg", "png", "gif", "bmp", "webp",
+            "pdf", "doc", "docx", "txt", "csv", "json", "xml"
+    );
+
+    private String sanitizeFilename(String originalFilename) {
+        if (originalFilename == null || originalFilename.isBlank()) {
+            return UUID.randomUUID() + ".bin";
+        }
+        // 提取扩展名
+        String ext = "";
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            ext = originalFilename.substring(dotIndex + 1).toLowerCase();
+        }
+        // 校验扩展名白名单，不在白名单内一律改成 .bin
+        if (!ALLOWED_EXTENSIONS.contains(ext)) {
+            ext = "bin";
+        }
+        // UUID 重命名 — 彻底阻断路径穿越和文件名注入
+        return UUID.randomUUID() + "." + ext;
+    }
+
     /**
-     * 文件上传
+     * 文件上传（安全加固版）
      */
     @PostMapping("/upload")
     public Result upload(MultipartFile file) {
-        // 定义文件的唯一标识
-        //String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-
-        String fileName = file.getOriginalFilename();
+        if (file == null || file.isEmpty()) {
+            return Result.error("上传文件为空");
+        }
+        String safeFileName = sanitizeFilename(file.getOriginalFilename());
         Path storagePath = Paths.get(storageDir).toAbsolutePath().normalize();
-        String realFilePath = storagePath.resolve(fileName).toString();
+        Path realFilePath = storagePath.resolve(safeFileName).normalize();
+        // 二次校验：确保解析后的路径仍在 storageDir 内
+        if (!realFilePath.startsWith(storagePath)) {
+            return Result.error("非法文件名");
+        }
         try {
             if (!FileUtil.isDirectory(storagePath.toString())) {
                 FileUtil.mkdir(storagePath.toString());
             }
-            FileUtil.writeBytes(file.getBytes(), realFilePath);
+            FileUtil.writeBytes(file.getBytes(), realFilePath.toString());
         } catch (IOException e) {
             System.out.println("文件上传错误！");
         }
-        String url = fileBaseUrl + "/files/download/" + fileName;
+        String url = fileBaseUrl + "/files/download/" + safeFileName;
         return Result.success(url);
     }
 
     /**
-     * 文件下载
+     * 文件下载（已内置路径穿越保护）
      */
     @GetMapping("/download/{fileName}")
     public void download(@PathVariable String fileName, HttpServletResponse response) {

@@ -35,8 +35,9 @@ public class AdminService {
         if (ObjectUtil.isNotNull(dbAdmin)) {
             throw new CustomException("用户已存在！");
         }
-        if (ObjectUtil.isEmpty(admin.getPassword())) {
-            admin.setPassword("1");
+        // 密码校验：非空且至少6位
+        if (ObjectUtil.isEmpty(admin.getPassword()) || admin.getPassword().length() < 6) {
+            throw new CustomException("密码不能为空且至少需要6位！");
         }
         /*默认名字为用户名*/
         if (ObjectUtil.isEmpty(admin.getName())) {
